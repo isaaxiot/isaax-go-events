@@ -39,7 +39,7 @@ func leaveFromRoom(user string, room string) {
 }
 
 func ExampleEvents() {
-	// regiter our events to the default event emmiter
+	// regiter our events to the default event Emitter
 	for evt, listeners := range testEvents {
 		On(evt, listeners...)
 	}

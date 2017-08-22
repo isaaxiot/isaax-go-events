@@ -1,8 +1,8 @@
-### Simple EventEmmiter for Go Programming Language.
+### Simple EventEmitter for Go Programming Language.
 
 Overview
 ------------
-`New() EventEmmiter  // New returns a new, empty, EventEmmiter`
+`New() EventEmitter  // New returns a new, empty, EventEmitter`
 
 
 ```go
@@ -16,7 +16,7 @@ Emit(EventName, ...interface{})
 // EventNames returns an array listing the events for which the emitter has registered listeners.
 // The values in the array will be strings.
 EventNames() []EventName
-// GetMaxListeners returns the max listeners for this emmiter
+// GetMaxListeners returns the max listeners for this Emitter
 // see SetMaxListeners
 GetMaxListeners() int
 // ListenerCount returns the length of all registered listeners to a particular event
@@ -45,7 +45,7 @@ Len() int
 ```go
 import "github.com/xshellinc/isaax-go-events"
 
-// initialize a new EventEmmiter to use
+// initialize a new EventEmitter to use
 e := events.New()
 
 // register an event with name "my_event" and one listener
@@ -59,10 +59,10 @@ e.Emit("my_event", "this is my payload")
 
 ```
 
-Default/global EventEmmiter
+Default/global EventEmitter
 ```go
 
-// register an event with name "my_event" and one listener to the global(package level) default EventEmmiter
+// register an event with name "my_event" and one listener to the global(package level) default EventEmitter
 events.On("my_event", func(payload ...interface{}) {
   message := payload[0].(string)
   print(message) // prints "this is my payload"
@@ -97,7 +97,8 @@ println(events.ListenerCount("my_event")) // prints 0
 People
 ------------
 
-The author of go-events is [@kataras](https://github.com/kataras).
+[@kataras](https://github.com/kataras)
+[@tectiv3](https://github.com/tectiv3)
 
 
 License
