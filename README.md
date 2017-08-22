@@ -1,4 +1,4 @@
-Simple EventEmmiter for Go Programming Language.
+### Simple EventEmmiter for Go Programming Language.
 
 Overview
 ------------
@@ -91,7 +91,7 @@ events.RemoveAllListeners("my_event")
 
 println(events.Len()) // prints 0
 println(events.ListenerCount("my_event")) // prints 0
-
+```
 
 
 People
