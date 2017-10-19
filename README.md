@@ -49,7 +49,7 @@ import "github.com/xshellinc/isaax-go-events"
 e := events.New()
 
 // register an event with name "my_event" and one listener
-e.On("my_event", func(payload ...interface{}) {
+e.On("my_event", func(event string, payload ...interface{}) {
   message := payload[0].(string)
   print(message) // prints "this is my payload"
 })
@@ -63,7 +63,7 @@ Default/global EventEmitter
 ```go
 
 // register an event with name "my_event" and one listener to the global(package level) default EventEmitter
-events.On("my_event", func(payload ...interface{}) {
+events.On("my_event", func(events string, payload ...interface{}) {
   message := payload[0].(string)
   print(message) // prints "this is my payload"
 })
@@ -77,9 +77,9 @@ Remove an event
 
 ```go
 
-events.On("my_event", func(payload ...interface{}) {
+events.On("my_event", func(event string, payload ...interface{}) {
   // first listener...
-},func (payload ...interface{}){
+},func (event string, payload ...interface{}){
   // second listener...
 })
 

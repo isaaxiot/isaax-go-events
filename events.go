@@ -25,7 +25,7 @@ type (
 	// EventName is just a type of string, it's the event name
 	EventName string
 	// Listener is the type of a Listener, it's a func which receives any,optional, arguments from the caller/Emitter
-	Listener func(...interface{})
+	Listener func(string, ...interface{})
 	// Events the type for registered listeners, it's just a map[string][]func(...interface{})
 	Events map[EventName][]Listener
 
@@ -149,7 +149,7 @@ func (e *emitter) Emit(evt EventName, data ...interface{}) {
 		for i := range listeners {
 			l := listeners[i]
 			if l != nil {
-				l(data...)
+				l(string(evt), data...)
 			}
 		}
 	}
@@ -269,7 +269,7 @@ func (e *emitter) Once(evt EventName, listener ...Listener) {
 		func(listener Listener, index int) {
 			fired := false
 			// remove the specific listener from the listeners before fire the real listener
-			modifiedListeners = append(modifiedListeners, func(data ...interface{}) {
+			modifiedListeners = append(modifiedListeners, func(name string, data ...interface{}) {
 				if e.evtListeners == nil {
 					return
 				}
@@ -286,7 +286,7 @@ func (e *emitter) Once(evt EventName, listener ...Listener) {
 						e.mu.Unlock()
 					}
 					fired = true
-					listener(data...)
+					listener(name, data...)
 				}
 
 			})
