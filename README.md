@@ -7,31 +7,31 @@ Overview
 
 ```go
 // AddListener is an alias for .On(eventName, listener).
-AddListener(EventName, ...Listener)
+AddListener(string, ...Listener)
 // Emit fires a particular event,
 // Synchronously calls each of the listeners registered for the event named
 // eventName, in the order they were registered,
 // passing the supplied arguments to each.
-Emit(EventName, ...interface{})
+Emit(string, ...interface{})
 // EventNames returns an array listing the events for which the emitter has registered listeners.
 // The values in the array will be strings.
-EventNames() []EventName
+EventNames() []string
 // GetMaxListeners returns the max listeners for this Emitter
 // see SetMaxListeners
 GetMaxListeners() int
 // ListenerCount returns the length of all registered listeners to a particular event
-ListenerCount(EventName) int
+ListenerCount(string) int
 // Listeners returns a copy of the array of listeners for the event named eventName.
-Listeners(EventName) []Listener
+Listeners(string) []Listener
 // On registers a particular listener for an event, func receiver parameter(s) is/are optional
-On(EventName, ...Listener)
+On(string, ...Listener)
 // Once adds a one time listener function for the event named eventName.
 // The next time eventName is triggered, this listener is removed and then invoked.
-Once(EventName, ...Listener)
+Once(string, ...Listener)
 // RemoveAllListeners removes all listeners, or those of the specified eventName.
 // Note that it will remove the event itself.
 // Returns an indicator if event and listeners were found before the remove.
-RemoveAllListeners(EventName) bool
+RemoveAllListeners(string) bool
 // Clear removes all events and all listeners, restores Events to an empty value
 Clear()
 // SetMaxListeners obviously this function allows the MaxListeners
