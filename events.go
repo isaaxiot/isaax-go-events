@@ -4,12 +4,13 @@ package events
 import (
 	"log"
 	"reflect"
+	"runtime"
 	"sync"
 )
 
 const (
 	// Version current version number
-	Version = "0.0.2"
+	Version = "0.0.3"
 	// DefaultMaxListeners is the number of max listeners per event
 	// default EventEmitters will print a warning if more than x listeners are
 	// added to it. This is a useful default which helps finding memory leaks.
@@ -17,7 +18,7 @@ const (
 	DefaultMaxListeners = 0
 
 	// EnableWarning prints a warning when trying to add an event which it's len is equal to the maxListeners
-	// Defaults to false, which means it does not prints a warning
+	// Defaults to false, which means it does not print a warning
 	EnableWarning = false
 )
 
@@ -147,10 +148,21 @@ func (e *emitter) Emit(evt string, data ...interface{}) {
 		for i := range listeners {
 			l := listeners[i]
 			if l != nil {
-				l(string(evt), data...)
+				callListenerWithRecover(l, string(evt), data...)
 			}
 		}
 	}
+}
+
+func callListenerWithRecover(listener Listener, event string, data ...interface{}) {
+	defer func() {
+		if x := recover(); x != nil {
+			stackTrace := make([]byte, 1<<20)
+			n := runtime.Stack(stackTrace, false)
+			log.Printf("events.On: %s. Panic occured: %v\nStack trace: %s", event, x, stackTrace[:n])
+		}
+	}()
+	listener(event, data...)
 }
 
 // EventNames returns an array listing the events for which the emitter has registered listeners.
