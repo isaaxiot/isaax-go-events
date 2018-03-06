@@ -10,7 +10,7 @@ import (
 
 const (
 	// Version current version number
-	Version = "0.0.3"
+	Version = "0.0.4"
 	// DefaultMaxListeners is the number of max listeners per event
 	// default EventEmitters will print a warning if more than x listeners are
 	// added to it. This is a useful default which helps finding memory leaks.
@@ -66,9 +66,12 @@ type (
 		SetMaxListeners(int)
 		// Len returns the length of all registered events
 		Len() int
+		// Stats returns stats snapshot
+		Stats() *stats
 	}
 
 	emitter struct {
+		stats        stats
 		maxListeners int
 		evtListeners Events
 		mu           sync.Mutex
@@ -129,6 +132,7 @@ func (e *emitter) AddListener(evt string, listener ...Listener) {
 		listeners = make([]Listener, e.maxListeners)
 	}
 
+	e.stats.incSubscribers(len(listener))
 	e.evtListeners[evt] = append(listeners, listener...)
 }
 
@@ -149,6 +153,7 @@ func (e *emitter) Emit(evt string, data ...interface{}) {
 			l := listeners[i]
 			if l != nil {
 				callListenerWithRecover(l, string(evt), data...)
+				e.stats.incFiredEvents()
 			}
 		}
 	}
@@ -289,10 +294,11 @@ func (e *emitter) Once(evt string, listener ...Listener) {
 
 						e.mu.Lock()
 						//e.evtListeners[evt] = append(e.evtListeners[evt][:index], e.evtListeners[evt][index+1:]...)
-						// we do not must touch the order because of the pre-defined indexes, we need just to make this listener nil in order to be not executed,
+						// we do not touch the order because of the pre-defined indexes, we need just to make this listener nil in order to be not executed,
 						// and make the len of listeners increase when listener is not nil, not just the len of listeners.
 						// so set this listener to nil
 						e.evtListeners[evt][index] = nil
+						e.stats.decSubscribers()
 						e.mu.Unlock()
 					}
 					fired = true
@@ -364,6 +370,8 @@ func (e *emitter) RemoveListener(evt string, listener Listener) bool {
 		return false
 	}
 
+	e.stats.decSubscribers()
+
 	var modifiedListeners []Listener = nil
 
 	if len(listeners) > 1 {
@@ -382,6 +390,7 @@ func Clear() {
 
 func (e *emitter) Clear() {
 	e.evtListeners = Events{}
+	e.stats.resetSubscribers()
 }
 
 // SetMaxListeners obviously this function allows the MaxListeners
@@ -410,4 +419,8 @@ func (e *emitter) Len() int {
 		return 0
 	}
 	return len(e.evtListeners)
+}
+
+func (e *emitter) Stats() *stats {
+	return e.stats.snapshot()
 }
