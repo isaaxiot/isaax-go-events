@@ -152,7 +152,7 @@ func (e *emitter) Emit(evt string, data ...interface{}) {
 		for i := range listeners {
 			l := listeners[i]
 			if l != nil {
-				callListenerWithRecover(l, string(evt), data...)
+				go callListenerWithRecover(l, string(evt), data...)
 				e.stats.incFiredEvents()
 			}
 		}
