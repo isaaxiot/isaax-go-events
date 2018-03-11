@@ -421,6 +421,11 @@ func (e *emitter) Len() int {
 	return len(e.evtListeners)
 }
 
+// Stats return emitter stats
+func Stats() *stats {
+	return defaultEmitter.Stats()
+}
+
 func (e *emitter) Stats() *stats {
 	return e.stats.snapshot()
 }
