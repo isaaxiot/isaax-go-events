@@ -52,6 +52,8 @@ type (
 		// Once adds a one time listener function for the event named eventName.
 		// The next time eventName is triggered, this listener is removed and then invoked.
 		Once(string, ...Listener)
+		// Sole adds a sole listener for this event by removing all listeners for the event before adding new listener
+		Sole(string, ...Listener)
 		// RemoveAllListeners removes all listeners, or those of the specified eventName.
 		// Note that it will remove the event itself.
 		// Returns an indicator if event and listeners were found before the remove.
@@ -251,6 +253,16 @@ func (e *emitter) Listeners(evt string) []Listener {
 	return nil
 }
 
+// Sole registers a sole listener for the event
+func Sole(evt string, listener ...Listener) {
+	defaultEmitter.Sole(evt, listener...)
+}
+
+func (e *emitter) Sole(evt string, listener ...Listener) {
+	e.RemoveAllListeners(evt)
+	e.AddListener(evt, listener...)
+}
+
 // On registers a particular listener for an event, func receiver parameter(s) is/are optional
 func On(evt string, listener ...Listener) {
 	defaultEmitter.On(evt, listener...)
@@ -372,7 +384,7 @@ func (e *emitter) RemoveListener(evt string, listener Listener) bool {
 
 	e.stats.decSubscribers()
 
-	var modifiedListeners []Listener = nil
+	var modifiedListeners []Listener
 
 	if len(listeners) > 1 {
 		modifiedListeners = append(listeners[:idx], listeners[idx+1:]...)
